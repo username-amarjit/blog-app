@@ -34,7 +34,7 @@ export async function createNewBlog(req, res) {
     const createBlogBody = z.object({
         title : z.string().min(3).max(100),
         desc : z.string().min(10).max(1000),
-        imageURL : z.string().min(3).max(200).nullable(),
+        imageURL : z.string().min(3).max(1000).nullable(),
     })
 
     const decoded = createBlogBody.safeParse(req.body)

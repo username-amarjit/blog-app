@@ -1,18 +1,18 @@
 import express from "express"
-import { auth } from "../middlewares/auth";
-import { getAllBlogs,getMyBlogs,createNewBlog,deleteBlog } from "../controller/blog.controller";
+import { auth } from "../middlewares/auth.js";
+import { getAllBlogs,getMyBlogs,createNewBlog,deleteBlog } from "../controller/blog.controller.js";
 
-const blogrouter = express.Router()
+export const blogrouter = express.Router()
 
-blogrouter.use(auth)
+// blogrouter.use(auth)
 
 // define the home page route
 blogrouter.get('/', getAllBlogs)
 
-blogrouter.get('/blog', getMyBlogs)
+blogrouter.get('/get', getMyBlogs)
 
 // define create blog route
-blogrouter.post('/blog', createNewBlog)
+blogrouter.post('/create', createNewBlog)
 
 // define update blog route
 // blogrouter.put('/blog', (req, res) => {
@@ -20,4 +20,4 @@ blogrouter.post('/blog', createNewBlog)
 // })
 
 // define delete blog route
-blogrouter.delete('/blog', deleteBlog)
+blogrouter.delete('/delete', deleteBlog)

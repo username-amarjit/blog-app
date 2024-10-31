@@ -1,4 +1,4 @@
-import { UserModel } from "../model/model";
+import { UserModel } from "../model/model.js";
 import bcrypt from "bcrypt";
 import z from "zod";
 
@@ -19,33 +19,33 @@ export async function signup(req, res) {
             err: parsedData.error
         })
     }
-
-    const { username, email, password } = req.body
-
-    // hash password
-    bcrypt.hash(password, process.env.SALT_ROUNDS, async (err, hashedPassword) => {
-        if (err) {
-            req.json({
-                msg: "error while generating hash",
-                error: err
-            })
-        } else {
-            const newUser = await UserModel.create({ username, email, password: hashedPassword })
-            if (newUser){
+    else {
+        const { username, email, password } = req.body
+        // hash password
+        bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS), async (err, hashedPassword) => {
+            if (err) {
                 res.json({
-                    msg:"Created New User SuccessFully.",
-                    data:newUser
+                    msg: "error while generating hash",
+                    error: err
                 })
-            }else{
-                req.json({msg:"Unable to create new User."})
-            }
+            } else {
+                const newUser = await UserModel.create({ username, email, password: hashedPassword })
+                if (newUser) {
+                    res.json({
+                        msg: "Created New User SuccessFully.",
+                        data: newUser
+                    })
+                } else {
+                    res.json({ msg: "Unable to create new User." })
+                }
 
-        }
-    });
+            }
+        });
+    }
 }
 
 
-export async function login(req,res) {
+export async function login(req, res) {
     const loginBody = z.object({
         username: z.string().min(5).max(50),
         password: z.string().min(8).max(50)
@@ -59,24 +59,26 @@ export async function login(req,res) {
             err: parsedData.error
         })
     }
-    const {username,password} = req.body
+    const { username, password } = req.body
 
-    const userFound = UserModel.findOne({username})
-    if (userFound){
-        const match = await bcrypt.compare(password,userFound.password)
-        if (match){
-            // generate token and send it.
-            res.json({
-                msg:"Login SuccessFul"
-            })
-        }else{
-            res.json({
-                msg:"invalid Creds."
-            })
-        }
-    }else{
+    const userFound = UserModel.findOne({ username })
+    if (userFound) {
+        bcrypt.compare(password, userFound.password, (err, result) => {
+            if (!result) {
+                // generate token and send it.
+                res.json({
+                    msg: "Login SuccessFul"
+                })
+            } else {
+                res.json({
+                    msg: "invalid Creds.",
+                    err:err
+                })
+            }
+        })
+    } else {
         res.json({
-            msg:"invalid Creds."
+            msg: "invalid Creds."
         })
     }
 

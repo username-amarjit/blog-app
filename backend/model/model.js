@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
-import ObjectID from Schema;
 
 const UserSchema = new Schema({
     username: String,
@@ -12,7 +11,7 @@ const BlogSchema = new Schema({
     title: String,
     desc: String,
     imageURL: String,
-    creatorId: ObjectID
+    creatorId: Schema.Types.ObjectID
 }, { timestamps: true });
 
 const UserModel = mongoose.model("users", UserSchema);

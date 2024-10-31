@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-function auth(req,res,next) {
+export function auth(req,res,next) {
     try{
         const token = req.headers.authorisation;
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
@@ -19,8 +19,4 @@ function auth(req,res,next) {
             msg:"unverified request."
         })
     }
-}
-
-export {
-    auth
 }
